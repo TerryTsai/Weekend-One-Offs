@@ -53,7 +53,6 @@ public class NFA<T> {
     }
 
     public boolean accepts(T ... ts) {
-        System.out.print(Arrays.toString(ts) + " - ");
         Set<Node<T>> currNodes = new HashSet<>();
         Set<Node<T>> nextNodes = new HashSet<>();
 
@@ -120,7 +119,7 @@ public class NFA<T> {
     // Testing
 
     public static void main(String[] args) {
-        testRepeat();
+        testResource();
     }
 
     public static void testRepeat() {
@@ -132,46 +131,44 @@ public class NFA<T> {
         b.add('b', c);
         c.add('c', d);
         NFA<Character> nfa = NFA.repeat(new NFA<>(a, d));
-        test(nfa, "ab", "abc", "abcab", "abcabc", "abcabcabcabc");
+        System.out.println(nfa.accepts('a','b','c'));
+        System.out.println(nfa.accepts('a','b','c','d'));
     }
 
     public static void testEvenOnes() {
         Node<Character> a = new Node<>();
         Node<Character> b = new Node<>();
-
         a.add('1', b);
         a.addDefault(a);
         b.add('1', a);
         b.addDefault(b);
-
         NFA<Character> nfa = new NFA<>(a, a);
-        test(nfa, "kjew1flkdsajlk14");
-        test(nfa, "0");
-        test(nfa, "1");
-        test(nfa, "00");
-        test(nfa, "01");
-        test(nfa, "10");
-        test(nfa, "000");
-        test(nfa, "001");
-        test(nfa, "010");
-        test(nfa, "011");
-        test(nfa, "100");
-        test(nfa, "101");
-        test(nfa, "110");
-        test(nfa, "111");
+        System.out.println(nfa.accepts('0'));
+        System.out.println(nfa.accepts('1'));
+        System.out.println(nfa.accepts('0','0'));
+        System.out.println(nfa.accepts('1','0'));
+        System.out.println(nfa.accepts('0','1'));
+        System.out.println(nfa.accepts('1','1'));
     }
 
-    private static void test(NFA<Character> nfa, String ... tests) {
-        for (String test : tests)
-            test(nfa, test);
-    }
-
-    private static void test(NFA<Character> nfa, String test) {
-        System.out.println(nfa.accepts(toArray(test)));
-    }
-
-    private static Character[] toArray(String str) {
-        return str.chars().mapToObj(c -> (char) c).toArray(Character[]::new);
+    public static void testResource() {
+        Runnable open = () -> System.out.println("Opening Resource.");
+        Runnable close = () -> System.out.println("Closing Resource.");
+        Runnable other = () -> System.out.println("Some Other Runnable.");
+        Node<Runnable> a = new Node<>();
+        Node<Runnable> b = new Node<>();
+        Node<Runnable> c = new Node<>();
+        a.add(open, b);
+        a.add(close, c);
+        a.addDefault(a);
+        b.add(close, a);
+        b.add(open, c);
+        b.addDefault(b);
+        NFA<Runnable> nfa = new NFA<>(a, a);
+        System.out.println(nfa.accepts(open, close));
+        System.out.println(nfa.accepts(open, other, close));
+        System.out.println(nfa.accepts(open, close, close));
+        System.out.println(nfa.accepts(close, open));
     }
 
 }
