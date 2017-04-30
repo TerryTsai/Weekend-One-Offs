@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+<title>FB</title>
+</head>
+
+<body>
+<script>
+var bird = "data:image/png;base64,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";
+
+function fb(config) {
+	var key = config.key;
+	var src = config.src;
+	var flap = config.flap;
+	var w = config.w || 10;
+	var h = config.h || 10;
+	var px = config.x || 0;
+	var py = config.y || 0;
+	var vx = config.vx || 0;
+	var vy = config.vy || 0;
+	var ax = config.ax || 0;
+	var ay = config.ay || 0;
+	var color = config.color || "white";
+
+	var sprite = document.createElement(src ? "img" : "div");
+	sprite.src = src;
+	sprite.style.display = "block";
+	sprite.style.position = "absolute";
+	sprite.style.background = color;
+	sprite.style.height = Math.floor(h) + "px";
+	sprite.style.left = Math.floor(px) + "px";
+	sprite.style.top = Math.floor(py) + "px";
+	sprite.style.width = Math.floor(w) + "px";
+
+	var render = function() {
+		sprite.style.top = Math.floor(py) + "px";
+		sprite.style.left = Math.floor(px) + "px";
+	};
+
+	var update = function() {
+		vx += ax;
+		vy += ay;
+		px += vx;
+		py += vy;
+	};
+
+	var collid = function(bf) {
+		if (px > bf.x() + bf.w())
+			return false;
+		if (bf.x() > px + w)
+			return false;
+		if (py > bf.y() + bf.h())
+			return false;
+		if (bf.y() > py + h)
+			return false;
+		return true;
+	};
+
+	var disabl = function() {
+		sprite.style.display = "none";
+	};
+
+	document.body.appendChild(sprite);
+
+	if (flap)
+		window.addEventListener("keydown", evt => {console.log(evt); if (evt.keyCode == key) vy = flap; });
+
+	return {
+		x: () => px,
+		y: () => py,
+		w: () => w,
+		h: () => h,
+		sprite: sprite,
+		render: render,
+		update: update,
+		collid: collid,
+		disabl: disabl
+	};
+};
+
+var a = [
+	fb({x:80, y:60, w:20, h:20, ay:0.1, flap:-5, key:32, color:"green", src:bird}),
+	//fb({x:40, y:60, w:20, h:20, ay:0.1, flap:-5, key:97, color:"blue", src:bird})
+];
+
+var b = [
+	fb({x:0, y:750, w:1000, h:25, color:"red"}),
+	fb({x:0, y:0, w:1000, h:25, color:"orange"})
+];
+
+var tic = 0;
+var score = 0;
+var game = setInterval(function() {
+	a.forEach(_a => _a.update());
+	b.forEach(_b => _b.update());
+
+	a.forEach(_a => _a.render());
+	b.forEach(_b => _b.render());
+
+	// Collision Detection
+	for (var _a = 0; _a < a.length; _a++) {
+		for (var _b = 0; _b < b.length; _b++) {
+			if (a[_a] && b[_b] && a[_a].collid(b[_b])) {
+				a[_a].disabl();
+				a.splice(_a, 1);
+				console.log("SCORE : " + (score / 2));
+			}
+		}
+	}
+
+	// Garbage Collector
+	for (var _b = 0; _b < b.length; _b++) {
+		if (b[_b].x() + b[_b].w() < 0) {
+			b.splice(_b, 1);
+			score++;
+		}
+	}
+
+	// Garbage Creator
+	if (tic++ % 100 === 0) {
+		var space = Math.random() * 200 + 100;
+		var centr = Math.random() * 500 + 100;
+		var width = Math.random() * 100 + 50;
+		var top = fb({x:1000, y:0, w:width, h: centr - space / 2, vx:-7, color:"green"});
+		var btm = fb({x:1000, y:centr + space / 2, w:width, h: 775 - (centr + space / 2), vx:-7, color:"green"});
+		b.push(top, btm);
+	}
+
+	// End Game
+	if (a.length <= 0) {
+		clearInterval(game);
+	}
+}, 10);
+
+
+document.addEventListener("keydown", (evt) => { if (a.length <= 0) location.reload(); });
+document.addEventListener("keydown", (evt) => { if (evt.keyCode == 80) clearInterval(game); });
+</script>
+</body>
+</html>
