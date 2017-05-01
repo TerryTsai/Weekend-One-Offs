@@ -3,18 +3,16 @@
 Collection of experimental one-off projects.
 
 ## Cellular
-Conway's Game of Life implemented on the GPU. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/js/cellular)
+Conway's Game of Life implemented on the GPU. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/js/cellular) , 
+[Demo](https://cdn.rawgit.com/TerryTsai/Weekend-One-Offs/6c8ca0ce2af93ba0ffd59c738f197ea0c3ec0770/js/cellular/cellular.html)
 
 <img src="https://github.com/TerryTsai/Weekend-One-Offs/blob/master/js/cellular/screen.png" width="400">
 
-[Demo](https://cdn.rawgit.com/TerryTsai/Weekend-One-Offs/6c8ca0ce2af93ba0ffd59c738f197ea0c3ec0770/js/cellular/cellular.html)
-
 ## Flappy
-Flappy Divs. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/js/flappy)
+Flappy Divs. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/js/flappy) , 
+[Demo](https://cdn.rawgit.com/TerryTsai/Weekend-One-Offs/0975d516/js/flappy/fb.html)
 
 <img src="https://github.com/TerryTsai/Weekend-One-Offs/blob/master/js/flappy/1488951196.png" width="400">
-
-[Demo](https://cdn.rawgit.com/TerryTsai/Weekend-One-Offs/0975d516/js/flappy/fb.html)
 
 ## Caps
 Audio visualizer for Youtube videos. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/js/visualizer)
