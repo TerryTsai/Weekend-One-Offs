@@ -7,7 +7,7 @@ Conway's Game of Life implemented on the GPU. [Source](https://github.com/TerryT
 
 <img src="https://github.com/TerryTsai/Weekend-One-Offs/blob/master/js/cellular/screen.png" width="400">
 
-[Demo](https://cdn.rawgit.com/TerryTsai/Weekend-One-Offs/796fdb487e2ac4128e0072e5300dff3649202c3b/js/cellular/cellular.html)
+[Demo](https://cdn.rawgit.com/TerryTsai/Weekend-One-Offs/ddd1fe9783b31629b5da93d9fdd659759b5c53f2/js/cellular/cellular.html)
 
 ## Flappy
 Flappy Divs. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/js/flappy)
