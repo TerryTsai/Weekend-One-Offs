@@ -80,8 +80,10 @@
 		container.addEventListener('mouseup', function() {
 			doDraw = false;
 		});
-		container.addEventListener('mousedown', function() {
+		container.addEventListener('mousedown', function(evt) {
 			doDraw = true;
+			var rect = container.getBoundingClientRect();
+			drawPixel(gl, evt.clientX - rect.left, evt.clientY - rect.top);
 		});
 		container.addEventListener('mousemove', function(evt) {
 			if (doDraw) {
@@ -141,8 +143,8 @@
 			last = curr;
 			curr = performance.now();
 			delta += (curr - last);
-			while (delta > 30) {
-				delta -= 30;
+			if (delta > 30) {
+				delta = 0;
 				step();
 				show(front);
 			}
