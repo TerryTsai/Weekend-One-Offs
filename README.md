@@ -3,7 +3,7 @@
 Collection of experimental one-off projects.
 
 ## Cellular
-Conway's Game of Life implemented on the GPU. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/js/cellular)
+Conway's Game of Life implemented on the GPU. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/js/cellular) [Demo](https://cdn.rawgit.com/TerryTsai/Weekend-One-Offs/dc3efd32/js/cellular/cellular.html)
 
 <img src="https://github.com/TerryTsai/Weekend-One-Offs/blob/master/js/cellular/screen.png" width="400">
 
