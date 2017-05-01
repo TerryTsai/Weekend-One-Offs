@@ -18,6 +18,8 @@
 	<h1 id="title">Cellular Automata on the GPU</h1>
 	<canvas id="container">Your browser doesn't support this feature.</canvas>
 	<button id="start">Toggle</button>
+	<label for="brush">Brush Size: <span id="brushInfo">1</span></label>
+	<input id="brush" type="range" min="1" max="100" value="1">
 
 	<!-- SHADERS -->
 	<script id="quad-shader" type="x-shader/x-vertex">
@@ -82,9 +84,26 @@
 		container.addEventListener('mousemove', function(evt) {
 			if (doDraw) {
 				var rect = container.getBoundingClientRect();
-				drawPixel(gl, evt.clientX - rect.left, evt.clientY - rect.top, 255);
+				drawPixel(gl, evt.clientX - rect.left, evt.clientY - rect.top);
 			}
 		});
+
+		var brushSize = 1;
+		var brushData = new Uint8Array([255, 0, 0, 255]);
+		var brush = document.getElementById('brush');
+		var brushInfo = document.getElementById('brushInfo');
+		brush.onchange = function() {
+			brushInfo.innerText = brush.value;
+			brushSize = brush.value;
+			var data = [];
+			for (var i = 0; i < brushSize * brushSize; i++) {
+				data.push(255);
+				data.push(0);
+				data.push(0);
+				data.push(255);
+			}
+			brushData = new Uint8Array(data);
+		};
 
 		var gl = createGL(container);
 		var w = container.width.toFixed(1);
@@ -173,12 +192,9 @@
 			image.src = src;
 		}
 
-		function drawPixel(gl, x, y, value) {
+		function drawPixel(gl, x, y) {
 			gl.bindTexture(gl.TEXTURE_2D, front);
-			gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, 3, 3, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([
-				value, 0, 0, 255, value, 0, 0, 255, value, 0, 0, 255,
-				value, 0, 0, 255, value, 0, 0, 255, value, 0, 0, 255,
-				value, 0, 0, 255, value, 0, 0, 255, value, 0, 0, 255]));
+			gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, brushSize, brushSize, gl.RGBA, gl.UNSIGNED_BYTE, brushData);
 			gl.bindTexture(gl.TEXTURE_2D, null);
 			show(front);
 		}
