@@ -64,22 +64,27 @@
 	<!-- SOURCE! -->
 	<script>
 		var start = document.getElementById('start');
-		var interval;
-		start.onclick = function() {
-			if (interval) {
-				clearInterval(interval);
-				interval = undefined;
-			} else {
-				interval = setInterval(function() {
-					step();
-					show(front);
-				}, 10);
-			}
-		};
+		var doRun = false;
+		var rate = 30;
+		var last, curr, delta = 0;
+		start.onclick = toggle;
 
+		var doDraw = false;
 		var container = document.getElementById('container');
 		container.width  = container.clientWidth;
 		container.height = container.clientHeight;
+		container.addEventListener('mouseup', function() {
+			doDraw = false;
+		});
+		container.addEventListener('mousedown', function() {
+			doDraw = true;
+		});
+		container.addEventListener('mousemove', function(evt) {
+			if (doDraw) {
+				var rect = container.getBoundingClientRect();
+				drawPixel(gl, evt.clientX - rect.left, evt.clientY - rect.top, 255);
+			}
+		});
 
 		var gl = createGL(container);
 		var w = container.width.toFixed(1);
@@ -102,6 +107,26 @@
 		var program2 = createProgram(gl, qs, rs);
 		var pr2Pos = gl.getAttribLocation(program2, 'position');
 		var pr2Tex = gl.getUniformLocation(program2, 'tex');
+
+		function toggle() {
+			doRun = !doRun;
+			if (doRun) {
+				curr = performance.now();
+				requestAnimationFrame(run);
+			}
+		}
+
+		function run() {
+			last = curr;
+			curr = performance.now();
+			delta += (curr - last);
+			while (delta > 30) {
+				delta -= 30;
+				step();
+				show(front);
+			}
+			if (doRun) requestAnimationFrame(run);
+		}
 
 		function step() {
 			gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
@@ -146,6 +171,16 @@
 				console.log(src + " loaded.");
 			};
 			image.src = src;
+		}
+
+		function drawPixel(gl, x, y, value) {
+			gl.bindTexture(gl.TEXTURE_2D, front);
+			gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, 3, 3, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([
+				value, 0, 0, 255, value, 0, 0, 255, value, 0, 0, 255,
+				value, 0, 0, 255, value, 0, 0, 255, value, 0, 0, 255,
+				value, 0, 0, 255, value, 0, 0, 255, value, 0, 0, 255]));
+			gl.bindTexture(gl.TEXTURE_2D, null);
+			show(front);
 		}
 
 		function createGL(el) {
