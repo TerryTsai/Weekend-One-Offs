@@ -5,23 +5,53 @@
 	<meta charset="UTF-8">
 	<meta name="author" content="Terry Tsai">
 	<meta name="description" content="Cellular Automata on the GPU">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet"> 
 	<style>
-		html{padding: 0; margin: 0;}
-		body{margin: 10px auto; width: 800px;}
-		#title{display:block; width: 100%; text-align: center;}
-		#info{display:block; width: 100%; text-align: center;}
-		#container{display:block; width: 100%; height: 600px;}
-		#start{display:block; width: 100%; margin-top: 10px;}
+		html, body {
+		    padding: 0;
+		    margin: 0;
+		}
+		#title {
+			margin: 0;
+		    position: fixed;
+		    top: 0;
+		    width: 100%;
+		    text-align: center;
+		    z-index: 100;
+		    color: #66D9EF;
+		    font-family: 'Lato', sans-serif;
+		    font-weight: 500;
+		    background: rgba(27, 28, 23, 0.80);
+		    padding: 10px;
+		}
+		#container {
+		    position: fixed;
+		    left: 0;
+		    top: 0;
+		    width: 100%;
+		    height: 100%;
+		    z-index: 0;
+		}
+		#controls {
+		    position: fixed;
+		    left: 0;
+		    bottom: 0;
+		    width: 100%;
+		    z-index: 100;
+		    color: white;
+		}
 	</style>
 </head>
 <body>
 	<!-- CONTENT -->
-	<h1 id="title">Cellular Automata on the GPU</h1>
-	<div id="info">Draw and toggle automata.</div>
+	<h2 id="title">Cellular Automata on the GPU</h2>
 	<canvas id="container">Your browser doesn't support this feature.</canvas>
-	<button id="start">Toggle</button>
-	<label for="brush">Brush Size: <span id="brushInfo">1</span></label>
-	<input id="brush" type="range" min="1" max="100" value="1">
+	<div id="controls">
+		<button id="start">Toggle</button>
+		<label for="brush">Brush Size: <span id="brushInfo">1</span></label>
+		<input id="brush" type="range" min="1" max="100">
+	</div>
 
 	<!-- SHADERS -->
 	<script id="quad-shader" type="x-shader/x-vertex">
@@ -55,12 +85,16 @@
 					+ get(-1.0,  1.0) + get( 0.0, -1.0) + get( 0.0,  1.0) 
 					+ get( 1.0, -1.0) + get( 1.0,  0.0) + get( 1.0,  1.0);
 			if (sum == 3) {
-				gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+				gl_FragColor = vec4(0.98, 0.15, 0.45, 1.0);
 			} else if (sum == 2) {
 				float current = float(get(0.0, 0.0));
-				gl_FragColor = vec4(current, 0.0, 0.0, 1.0);
+				if (current > 0.5) {
+					gl_FragColor = vec4(0.98, 0.15, 0.45, 1.0);
+				} else {
+					gl_FragColor = vec4(0.15, 0.16, 0.13, 1.0);
+				}
 			} else {
-				gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+				gl_FragColor = vec4(0.15, 0.16, 0.13, 1.0);
 			}
 		}
 	</script>
@@ -77,42 +111,23 @@
 		var container = document.getElementById('container');
 		container.width  = container.clientWidth;
 		container.height = container.clientHeight;
-		container.addEventListener('mouseup', function() {
-			doDraw = false;
-		});
-		container.addEventListener('mousedown', function(evt) {
-			doDraw = true;
-			var rect = container.getBoundingClientRect();
-			drawPixel(gl, evt.clientX - rect.left, evt.clientY - rect.top);
-		});
-		container.addEventListener('mousemove', function(evt) {
-			if (doDraw) {
-				var rect = container.getBoundingClientRect();
-				drawPixel(gl, evt.clientX - rect.left, evt.clientY - rect.top);
-			}
-		});
+		container.onmouseup = handleMouse;
+		container.onmousedown = handleMouse;
+		container.onmousemove = handleMouse;
 
-		var brushSize = 1;
-		var brushData = new Uint8Array([255, 0, 0, 255]);
-		var brush = document.getElementById('brush');
-		var brushInfo = document.getElementById('brushInfo');
-		brush.onchange = function() {
-			brushInfo.innerText = brush.value;
-			brushSize = brush.value;
-			var data = [];
-			for (var i = 0; i < brushSize * brushSize; i++) {
-				data.push(255);
-				data.push(0);
-				data.push(0);
-				data.push(255);
-			}
-			brushData = new Uint8Array(data);
-		};
-
-		var gl = createGL(container);
 		var w = container.width.toFixed(1);
 		var h = container.height.toFixed(1);
-		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+		var brushSize;
+		var brushData;
+		var brush = document.getElementById('brush');
+		var brushInfo = document.getElementById('brushInfo');
+		brush.onchange = updateBrush;
+
+		brush.value = 50;
+		updateBrush();
+
+		var gl = createGL(container);
 
 		var qs = createShader(gl, document.getElementById('quad-shader'), w, h);
 		var cs = createShader(gl, document.getElementById('copy-shader'), w, h);
@@ -131,11 +146,19 @@
 		var pr2Pos = gl.getAttribLocation(program2, 'position');
 		var pr2Tex = gl.getUniformLocation(program2, 'tex');
 
+		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+		toggle();
+
+		// High Coupling
 		function toggle() {
 			doRun = !doRun;
 			if (doRun) {
+				start.innerText = "Stop";
 				curr = performance.now();
 				requestAnimationFrame(run);
+			} else {
+				start.innerText = "Start";
 			}
 		}
 
@@ -143,7 +166,7 @@
 			last = curr;
 			curr = performance.now();
 			delta += (curr - last);
-			if (delta > 30) {
+			if (delta > rate) {
 				delta = 0;
 				step();
 				show(front);
@@ -186,20 +209,56 @@
 			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 		}
 
-		function drawPixel(gl, x, y) {
-			var xLimit = parseInt(x) + parseInt(brushSize);
-			var yLimit = parseInt(y) + parseInt(brushSize);
-			if (xLimit < w && yLimit < h) {
-				gl.bindTexture(gl.TEXTURE_2D, front);
-				gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, brushSize, brushSize, gl.RGBA, gl.UNSIGNED_BYTE, brushData);
-				gl.bindTexture(gl.TEXTURE_2D, null);
-				show(front);
+		function updateBrush() {
+			brushInfo.innerText = brush.value;
+			brushSize = brush.value;
+			var data = [];
+			for (var i = 0; i < brushSize * brushSize; i++) {
+				data.push(249);
+				data.push(38);
+				data.push(114);
+				data.push(255);
 			}
+			brushData = new Uint8Array(data);
+		}
+
+		function drawBrush(evt) {
+			var rect = container.getBoundingClientRect();
+			var x = evt.clientX - rect.left;
+			var y = evt.clientY - rect.top;
+			writeTexture(gl, front, w, h, x, y, brushSize, brushData);
+			show(front);
+		}
+
+		function handleMouse(evt) {
+			if (evt.type === "mouseup") {
+				doDraw = false;
+			} else if (evt.type === "mousedown") {
+				doDraw = true;
+				drawBrush(evt);
+			} else if (evt.type === "mousemove") {
+				if (doDraw) drawBrush(evt);
+			}
+		}
+
+		// No Coupling
+		function writeTexture(gl, tex, w, h, x, y, size, data) {
+			var x = parseInt(x);
+			var y = parseInt(y);
+			var size = parseInt(size);
+			var hsize = size / 2.0;
+			if (x - hsize <= 0) x = hsize;
+			if (y - hsize <= 0) y = hsize;
+			if (x + hsize >= w) x = w - hsize;
+			if (y + hsize >= h) y = h - hsize;
+			gl.bindTexture(gl.TEXTURE_2D, tex);
+			gl.texSubImage2D(gl.TEXTURE_2D, 0, x - hsize, y - hsize, size, size, gl.RGBA, gl.UNSIGNED_BYTE, data);
+			gl.bindTexture(gl.TEXTURE_2D, null);
 		}
 
 		function createGL(el) {
 			var gl = el.getContext('webgl') || el.getContext('experimental-webgl');
-			gl.clearColor(0.0, 0.0, 0.0, 1.0);
+			gl.clearColor(0.15, 0.16, 0.13, 1.0);
 			gl.clear(gl.COLOR_BUFFER_BIT);
 			return gl;
 		}
