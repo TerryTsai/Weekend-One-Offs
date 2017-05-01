@@ -14,6 +14,8 @@ Flappy Divs. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/
 
 <img src="https://github.com/TerryTsai/Weekend-One-Offs/blob/master/js/flappy/1488951196.png" width="400">
 
+[Demo](https://cdn.rawgit.com/TerryTsai/Weekend-One-Offs/0975d516/js/flappy/fb.html)
+
 ## Caps
 Audio visualizer for Youtube videos. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/js/visualizer)
 
