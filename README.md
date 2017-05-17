@@ -2,6 +2,28 @@
 
 Collection of experimental one-off projects.
 
+## JServe
+Fast, Lightweight Java Server Framework. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/java/jserve)
+
+<code>Connector</code> thread queues up client connections from <code>ServerSocket</code> as quickly as possible.
+<code>Dispatcher</code> thread monitors the connection queue and dispatches request handling to an
+<code>ExecutorService</code>. Worker threads in the <code>ExecutorService</code> take these client connections,
+parse the HTTP Request, execute all registered pre-processors, and finally execute the first processor that (regex)
+matches the requested path.
+
+```java
+JServe jServe = new JServe();
+
+// Add Processors For All Requests
+jServe.addPreprocessor(new LoggingProcessor());
+
+// Add Processors Per Regex Route
+jServe.addEndpoint(".*\\.html", new HtmlProcessor(new File("./www/html")));
+jServe.addEndpoint(".*", new NotFoundProcessor());
+
+jServe.run();
+```
+
 ## Cellular
 Conway's Game of Life implemented on the GPU. [Source](https://github.com/TerryTsai/Weekend-One-Offs/tree/master/js/cellular) , 
 [Demo](https://cdn.rawgit.com/TerryTsai/Weekend-One-Offs/6c8ca0ce2af93ba0ffd59c738f197ea0c3ec0770/js/cellular/cellular.html)
